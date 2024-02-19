@@ -22,42 +22,44 @@ local Tabs = {
 
 local Options = Fluent.Options
 
+
 local Weaponlist = {}
 local Weapon = nil
 
-for i, v in pairs(game:GetService("Players").LocalPlayer.Backpack:GetChildren()) do
-    table.insert(Weaponlist, v.Name)
+for i,v in pairs(game:GetService("Players").LocalPlayer.Backpack:GetChildren()) do
+    table.insert(Weaponlist,v.Name)
 end
 
-local MultiDropdown = Tabs.General:AddMultiDropdown("MultiDropdown", {
+
+
+local Dropdown = Tabs.General:AddDropdown("Boss", {
     Title = "Boss",
-    Description = "You can select multiple values.",
     Values = {"Shadow", "Gojo", "Kashimo", "Sukuna", "Snow Bandit Leader", "Shank", "Monkey King", "Sand Man", "Bomb Man", "Bandit Leader", "Artoria", "Uraume", "Gojo [Unleashed]", "Sukuna [Half Power]", "Rimuru", "Killua"},
     Multi = true,
-    Default = {"Snow Bandit Leader", "Monkey King"},
+    Default = 1,
 })
 
-MultiDropdown:OnChanged(function(Values)
-    for _, Value in ipairs(Values) do
-        print("MultiDropdown changed:", Value)
-    end
+Dropdown:SetValue("None")
+
+Dropdown:OnChanged(function(Value)
+    SelectedBoss = Value
 end)
 
-local ToggleAutoFarm = Tabs.General:AddToggle("ToggleAutoFarm", {Title = "Auto Farm Boss", Default = false })
+local Toggle = Tabs.General:AddToggle("MyToggle", {Title = "Auto Farm Boss", Default = false })
 
-ToggleAutoFarm:OnChanged(function(Value)
+Toggle:OnChanged(function(Value)
     _G.AutoFarm = Value
 
     while _G.AutoFarm do
         wait()
-        for _, SelectedBoss in ipairs(MultiDropdown:GetSelected()) do
+        if SelectedBoss ~= "None" then
             local BossCFrame = game:GetService("Workspace").Lives[SelectedBoss].HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
             game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = BossCFrame
         end
     end
 end)
 
-Options.ToggleAutoFarm:SetValue(false)
+Options.MyToggle:SetValue(false)
 
 
 local Dropdown = Tabs.General:AddDropdown("Select weapon", {
